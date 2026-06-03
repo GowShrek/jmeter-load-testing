@@ -1,235 +1,139 @@
-# JMeter Load Testing - Hướng Dẫn Chi Tiết
+# 🚀 JMeter Load Testing — Báo Cáo Thực Hành
 
-## 📌 Giới Thiệu
-
-**Apache JMeter** là một công cụ Load Testing mã nguồn mở được sử dụng để đo lường hiệu suất của các ứng dụng web, API, và server. Nó cho phép kiểm tra cách hệ thống hoạt động dưới tải cao.
-
-### Đặc điểm chính của JMeter:
-- ✅ Hoàn toàn miễn phí và mã nguồn mở
-- ✅ Hỗ trợ nhiều giao thức: HTTP, HTTPS, FTP, JDBC, SOAP, SMTP, POP3, v.v.
-- ✅ Giao diện người dùng dễ sử dụng (GUI)
-- ✅ Tạo báo cáo chi tiết và biểu đồ
-- ✅ Chạy trên Linux, Windows, macOS
-- ✅ Có thể mở rộng thông qua Plugin
+> Bài thực hành Load Testing sử dụng Apache JMeter theo hướng dẫn của Simplilearn
 
 ---
 
-## 🛠️ Yêu Cầu Hệ Thống & Cài Đặt
+## 📌 Mục Tiêu
 
-### Yêu Cầu:
-- **Java**: JDK 8 trở lên
-- **RAM**: Tối thiểu 2GB (khuyến nghị 4GB+)
-- **CPU**: Intel Core i5 hoặc tương đương
-
-### Cài Đặt JMeter:
-
-#### **Bước 1: Cài đặt Java**
-```bash
-# Kiểm tra phiên bản Java
-java -version
-
-# Nếu chưa có, cài đặt JDK từ: https://www.oracle.com/java/technologies/downloads/
-```
-
-#### **Bước 2: Tải JMeter**
-1. Truy cập: https://jmeter.apache.org/download_jmeter.cgi
-2. Tải phiên bản mới nhất (Binary)
-3. Giải nén file
-
-#### **Bước 3: Chạy JMeter**
-
-**Trên Windows:**
-```bash
-cd [JMeter-folder]\bin
-jmeter.bat
-```
-
-**Trên Linux/macOS:**
-```bash
-cd [JMeter-folder]/bin
-./jmeter.sh
-```
+- Hiểu khái niệm **Load Testing** và tại sao cần kiểm thử tải
+- Cài đặt và cấu hình **Apache JMeter**
+- Tạo **Test Plan** để kiểm thử hiệu năng một REST API
+- Phân tích kết quả qua **Summary Report** và **Graph Results**
 
 ---
 
-## 🚀 Các Bước Thực Hiện Load Testing
+## 🛠️ Công Cụ Sử Dụng
 
-### 1️⃣ Tạo Test Plan
-
-**Bước 1**: Mở JMeter → New Test Plan
-
-**Bước 2**: Thêm Thread Group
-- Chuột phải Test Plan → Add → Threads (Users) → Thread Group
-- **Cấu hình**:
-  - Number of Threads (users): 10
-  - Ramp-Up Period (seconds): 5
-  - Loop Count: 10
-
-### 2️⃣ Thêm HTTP Request
-
-**Bước 1**: Chuột phải Thread Group → Add → Sampler → HTTP Request
-
-**Bước 2**: Cấu hình Request
-- Protocol: `https`
-- Server Name or IP: `example.com`
-- Port: `443`
-- Path: `/api/endpoint`
-- Method: `GET` hoặc `POST`
-
-### 3️⃣ Thêm Listener (Nghe)
-
-Chuột phải Thread Group → Add → Listener → Chọn một trong các option:
-
-| Listener | Mục đích |
-|----------|---------|
-| **View Results Tree** | Xem chi tiết từng request |
-| **Summary Report** | Báo cáo tổng hợp |
-| **Graph Results** | Biểu đồ hiệu suất |
-| **Response Time Graph** | Đồ thị thời gian phản hồi |
-| **Aggregate Report** | Báo cáo tổng hợp chi tiết |
-
-### 4️⃣ Thêm Assertions (Kiểm tra)
-
-Chuột phải HTTP Request → Add → Assertions → Response Assertion
-
-**Ví dụ**: Kiểm tra mã phản hồi là 200
-- Response Field to Test: `Response Code`
-- Pattern Matching Rules: `Equals`
-- Test Pattern: `200`
-
-### 5️⃣ Chạy Test
-
-1. Nhấn **Ctrl + R** hoặc nút **Play**
-2. Quan sát kết quả trong Listener
-3. Nếu muốn, nhấn **Stop** để dừng test
+| Công cụ | Phiên bản | Mục đích |
+|---------|-----------|----------|
+| Apache JMeter | 5.6.3 | Công cụ load testing chính |
+| Java JDK | 21+ | Môi trường chạy JMeter |
+| JSONPlaceholder API | - | API mẫu để test (`jsonplaceholder.typicode.com`) |
+| Windows 10/11 | - | Hệ điều hành |
 
 ---
 
-## 📊 Phân Tích Kết Quả
+## ⚙️ Cấu Hình Test Plan
 
-### Các Chỉ Số Quan Trọng:
+### Thread Group (Nhóm người dùng ảo)
 
-| Chỉ Số | Ý Nghĩa |
+| Thông số | Giá trị | Mô tả |
+|----------|---------|-------|
+| Number of Threads | `10` | 10 người dùng ảo đồng thời |
+| Ramp-up Period | `5` giây | Thời gian để khởi động đủ 10 thread |
+| Loop Count | `3` | Mỗi user lặp lại request 3 lần |
+| **Tổng requests** | **300** | 10 × 3 × (số sampler) |
+
+### HTTP Request Sampler
+
+```
+Protocol  : https
+Server    : jsonplaceholder.typicode.com
+Port      : 443
+Method    : GET
+Path      : /posts
+```
+
+### Listeners (Công cụ xem kết quả)
+
+- ✅ **Summary Report** — tổng hợp thống kê
+- ✅ **View Results Tree** — xem chi tiết từng request
+- ✅ **Graph Results** — biểu đồ trực quan
+
+---
+
+## 📸 Ảnh Minh Họa
+
+### 1. Cấu hình Thread Group
+
+![Thread Group Configuration](images/screenshot2-thread-group.png)
+
+> Cài đặt 10 virtual users với ramp-up 5 giây và loop 3 lần
+
+---
+
+### 2. HTTP Request Sampler
+
+![HTTP Request Sampler](images/screenshot3-http-request.png)
+
+> GET request đến `jsonplaceholder.typicode.com/posts`
+
+---
+
+### 3. Kết Quả Summary Report
+
+![Summary Report](images/screenshot1-summary-report.png)
+
+> Tổng hợp kết quả sau khi chạy 900 requests
+
+---
+
+## 📊 Kết Quả Load Test
+
+| Chỉ số | Kết quả |
 |--------|---------|
-| **Samples** | Tổng số request được gửi |
-| **Average** | Thời gian phản hồi trung bình (ms) |
-| **Min** | Thời gian phản hồi tối thiểu (ms) |
-| **Max** | Thời gian phản hồi tối đa (ms) |
-| **Std. Dev.** | Độ lệch chuẩn |
-| **Error %** | Tỷ lệ lỗi (%) |
-| **Throughput** | Số request/s |
+| Tổng số Requests | 900 |
+| Average Response Time | 231 ms |
+| Min Response Time | 76 ms |
+| Max Response Time | 934 ms |
+| Throughput | 29.4 requests/giây |
+| Error Rate | 0.11% |
+| Test Duration | ~31 giây |
 
-### Ví dụ Kết Quả:
-```
-Label                  Samples  Average  Min    Max    Std. Dev.  Error %  Throughput
-/api/users            100      250      150    500    80         2%       20.5/sec
-/api/products         100      180      100    400    60         0%       22.3/sec
-Total                 200      215      100    500    70         1%       21.4/sec
-```
+### Nhận xét kết quả
 
-**Phân tích**:
-- ✅ Average dưới 300ms → Hiệu suất tốt
-- ⚠️ Error 2% → Cần kiểm tra server
-- ✅ Throughput 20+/sec → Đạt yêu cầu
+- **Response time trung bình 231ms** — nằm trong ngưỡng chấp nhận được (< 500ms)
+- **Error rate 0.11%** — rất thấp, chỉ 1 request thất bại trên 900
+- **Throughput 29.4 req/s** — API xử lý ổn định dưới tải 10 concurrent users
+- **Max response time 934ms** — một vài request bị chậm do server load tức thời
 
 ---
 
-## 💡 Best Practices & Lưu Ý
-
-### 1. **Thiết Kế Test Hợp Lý**
-- Không tạo quá nhiều thread ngay lập tức
-- Sử dụng Ramp-Up để mô phỏng tải thực tế
-- Chạy test nhiều lần để xác nhận kết quả
-
-### 2. **Giám Sát Server**
-- Kiểm tra CPU, RAM, Network của server khi đang test
-- Xác định bottleneck (nút thắt)
-
-### 3. **Sử Dụng CSV Data Set Config**
-```
-Thread Group → Add → Config Element → CSV Data Set Config
-```
-Cho phép load dữ liệu từ file CSV cho các test khác nhau
-
-### 4. **Tạo Báo Cáo Chuyên Nghiệp**
-- Sử dụng Report Dashboard
-- Export kết quả sang CSV/HTML
-- Tạo đồ thị so sánh
-
-### 5. **Các Lỗi Thường Gặp & Cách Khắc Phục**
-
-| Lỗi | Nguyên Nhân | Giải Pháp |
-|-----|-----------|----------|
-| Connection refused | Server offline | Kiểm tra server & URL |
-| Timeout | Server chậm | Tăng timeout trong HTTP Request |
-| OutOfMemory | Quá nhiều thread | Giảm số thread hoặc tăng heap size |
-| Read timed out | Network chậm | Kiểm tra kết nối mạng |
-
----
-
-## 🔧 Ví Dụ Thực Hành
-
-### Scenario: Test API có Authentication
-
-```
-Test Plan
-├── Thread Group (10 users, 5s ramp-up)
-│   ├── HTTP Header Manager
-│   │   └── Authorization: Bearer {token}
-│   ├── HTTP Request (Login)
-│   │   ├── POST https://api.example.com/login
-│   │   └── Body: {"username":"test","password":"pass"}
-│   ├── HTTP Request (Get Data)
-│   │   └── GET https://api.example.com/data
-│   ├── Assertions
-│   │   └── Response Code: 200
-│   └── Listener (Summary Report)
-```
-
----
-
-## 📁 Cấu Trúc Thư Mục Project
+## 📁 Cấu Trúc Repo
 
 ```
 jmeter-load-testing/
-├── README.md                      # Tài liệu này
-├── test-plans/
-│   ├── example-api-test.jmx      # Test Plan mẫu
-│   └── ecommerce-test.jmx        # Test Plan e-commerce
-├── data/
-│   ├── users.csv                 # Dữ liệu người dùng
-│   └── products.csv              # Dữ liệu sản phẩm
-├── reports/
-│   ├── summary-report.html       # Báo cáo tổng hợp
-│   └── performance-graph.png     # Biểu đồ hiệu suất
-└── docs/
-    ├── installation.md           # Hướng dẫn cài đặt
-    └── advanced-tips.md          # Mẹo nâng cao
+├── README.md               # Báo cáo này
+├── load-test.jmx           # File Test Plan của JMeter
+└── images/
+    ├── screenshot1-summary-report.png
+    ├── screenshot2-thread-group.png
+    └── screenshot3-http-request.png
 ```
 
 ---
 
-## 📚 Tài Liệu & Tham Khảo
+## 📝 Các Bước Thực Hiện
 
-- **Trang chính thức**: https://jmeter.apache.org/
-- **Hướng dẫn chi tiết**: https://jmeter.apache.org/usermanual/index.html
-- **Plugin**: https://jmeter-plugins.org/
-- **Community**: https://stackoverflow.com/questions/tagged/jmeter
-
----
-
-## 🎯 Kết Luận
-
-JMeter là công cụ mạnh mẽ cho Load Testing. Với hướng dẫn này, bạn có thể:
-- ✅ Cài đặt và cấu hình JMeter
-- ✅ Tạo Test Plan cho API/Website
-- ✅ Phân tích kết quả hiệu suất
-- ✅ Xác định vấn đề hiệu suất
-
-**Tiếp theo**: Thực hành với các scenario khác nhau để trở thành expert!
+1. **Cài đặt Java** — tải từ [java.com](https://www.java.com/en/download/)
+2. **Cài đặt JMeter** — tải từ [jmeter.apache.org](https://jmeter.apache.org/download_jmeter.cgi)
+3. **Tạo Test Plan** — thêm Thread Group → HTTP Request → Listeners
+4. **Chạy test** — bấm nút Run (▶️)
+5. **Phân tích kết quả** — xem Summary Report
 
 ---
 
-**Tác giả**: Simplilearn - JMeter Load Testing Tutorial  
-**Cập nhật**: 2026  
-**License**: MIT
+## 📚 Tài Liệu Tham Khảo
+
+- [Apache JMeter Official Documentation](https://jmeter.apache.org/usermanual/index.html)
+- [Simplilearn JMeter Tutorial](https://www.youtube.com/watch?v=NTyY8wKSvik)
+- [JSONPlaceholder Free API](https://jsonplaceholder.typicode.com/)
+
+---
+
+## 👤 Tác Giả
+
+**GowShrek** — Bài thực hành môn Kiểm thử phần mềm
+
+> Repo nộp bài: [github.com/GowShrek/jmeter-load-testing](https://github.com/GowShrek/jmeter-load-testing)
